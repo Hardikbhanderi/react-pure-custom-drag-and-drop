@@ -1,5 +1,7 @@
 import { useRef, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
+import Child from "./child";
+import Parent from "./parent";
 
 function Stable() {
   const [parents, setParents] = useState([
@@ -19,26 +21,26 @@ function Stable() {
       id: "parent2",
       children: [],
     },
-    {
-      id: "parent3",
-      children: [
-        { id: uuidv4(), text: "Dog" },
-        { id: uuidv4(), text: "Elephant" },
-        { id: uuidv4(), text: "Fish" },
-      ],
-    },
-    {
-      id: "parent4",
-      children: [],
-    },
-    {
-      id: "parent5",
-      children: [{ id: uuidv4(), text: "Grapes" }],
-    },
-    {
-      id: "parent6",
-      children: [],
-    },
+    // {
+    //   id: "parent3",
+    //   children: [
+    //     { id: uuidv4(), text: "Dog" },
+    //     { id: uuidv4(), text: "Elephant" },
+    //     { id: uuidv4(), text: "Fish" },
+    //   ],
+    // },
+    // {
+    //   id: "parent4",
+    //   children: [],
+    // },
+    // {
+    //   id: "parent5",
+    //   children: [{ id: uuidv4(), text: "Grapes" }],
+    // },
+    // {
+    //   id: "parent6",
+    //   children: [],
+    // },
   ]);
   const draggedElementRef = useRef();
   const dummyRef = useRef();
@@ -53,6 +55,9 @@ function Stable() {
   };
 
   const handleDragStart = (event, item) => {
+    // setTimeout(() => {
+    //   debugger
+    // }, 1000);
     setDraggedItem(item);
   };
 
@@ -143,29 +148,7 @@ function Stable() {
     setPlaceholderIndex({});
   };
 
-  const renderChild = (item, index, parent) => {
-    return (
-      <div
-        key={item.id}
-        className={`child ${
-          Object.keys(draggedItem).length === 0 ? "makeChildVisible" : ""
-        }`}
-        draggable
-        onDragStart={(e) =>
-          handleDragStart(e, { item, index, parentId: parent.id })
-        }
-        ref={
-          index === draggedItem.index && draggedItem.parentId === parent.id
-            ? draggedElementRef
-            : dummyRef
-        }
-        onDrag={(e) => handleDrag(e, { item, index, parentId: parent.id })}
-        onDragEnd={handleDragEnd}
-      >
-        <h4>{item.text}</h4>
-      </div>
-    );
-  };
+  
 
   const getDragOverClass = (parent) => {
     return parent.children.length > 0
@@ -173,26 +156,23 @@ function Stable() {
       : "activeDragOver";
   };
 
+  const parentProps = {
+    draggedOverParent,
+    getDragOverClass,
+    draggedItem,
+    handleDragOverParent,
+    handleDragEnter,
+    handleDropEndCapture,
+    handleDragStart,
+    draggedElementRef,
+    handleDrag,
+    handleDragEnd
+  };
+
   return (
     <div className="container">
       {parents.map((parent) => (
-        <div
-          key={parent.id}
-          className={`parent ${
-            draggedOverParent === parent.id ? getDragOverClass(parent) : ""
-          } ${
-            draggedItem.parentId === parent.id
-              ? "activeDragWithChildOneChild"
-              : ""
-          }`}
-          onDragOver={(e) => handleDragOverParent(e, parent.id)}
-          onDrop={(e) => handleDragEnter(e, parent.id)}
-          onDropCapture={handleDropEndCapture}
-        >
-          {parent.children.map((child, index) =>
-                renderChild(child, index, parent)
-              )}
-        </div>
+        <Parent parent={parent} {...parentProps} />
       ))}
     </div>
   );

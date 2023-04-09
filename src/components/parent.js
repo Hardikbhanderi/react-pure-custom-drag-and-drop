@@ -13,49 +13,51 @@ const Parent = ({
   handleDragStart,
   draggedElementRef,
   handleDrag,
-  handleDragEnd
+  handleDragEnd,
 }) => {
-    const [parentRef, isParentHovered] = useHover();
-    
-   const [dragElement, setDragElement] =  useState({index : null})
-   const  dragElementWidth = useRef()
-console.log('@@@@@', dragElementWidth)
-    const handleDragAction = (e , { item, index, parentId }) =>{
-        if(e.target.clientWidth > 0){
-            // console.log('e.target.clientWidth @@@@@', e.target.clientWidth)
+  const [parentRef, isParentHovered] = useHover();
 
-            dragElementWidth.current = e.target.clientWidth;
-            setDragElement({index : index, width : e.target})
-        }
-        
-        handleDrag()
+  const [dragElement, setDragElement] = useState({ index: null });
+  const dragElementWidth = useRef();
+
+  const handleDragAction = (e, { item, index, parentId }) => {
+    if (e.target.clientWidth > 0) {
+      // console.log('e.target.clientWidth @@@@@', e.target.clientWidth)
+
+      dragElementWidth.current = e.target.clientWidth;
+      setDragElement({ index: index, width: e.target });
     }
 
-    const handleDragEndAction = () =>{
-        setDragElement({index : null})
-        handleDragEnd()
-    }
+    handleDrag();
+  };
 
-    const renderChild = (item, index, parent) => {
-        const isRightSideElement = index > dragElement.index && dragElement.index !== null;
-        
-        return (
-          <Child
-            item={item}
-            draggedItem={draggedItem}
-            handleDragStart={handleDragStart}
-            index={index}
-            parent={parent}
-            isRightSideElement={isRightSideElement}
-            draggedElementRef={draggedElementRef}
-            handleDrag={handleDragAction}
-            handleDragEnd={handleDragEndAction}
-            isParentHovered={isParentHovered}
-            dragElementWidth={isParentHovered ? dragElementWidth?.current : 0}
-          />
-        );
-      };
+  const handleDragEndAction = () => {
+    setDragElement({ index: null });
+    handleDragEnd();
+  };
 
+  const renderChild = (item, index, parent, mouseOver) => {
+    const isRightSideElement =
+      index > dragElement.index && dragElement.index !== null;
+
+    return (
+      <Child
+        item={item}
+        draggedItem={draggedItem}
+        handleDragStart={handleDragStart}
+        index={index}
+        parent={parent}
+        isRightSideElement={isRightSideElement}
+        draggedElementRef={draggedElementRef}
+        handleDrag={handleDragAction}
+        handleDragEnd={handleDragEndAction}
+        isParentHovered={isParentHovered}
+        dragElementWidth={mouseOver ? dragElementWidth?.current : 0}
+      />
+    );
+  };
+
+  const mouseOver = draggedOverParent === parent.id;
   return (
     <div
       key={parent.id}
@@ -69,7 +71,7 @@ console.log('@@@@@', dragElementWidth)
       onDropCapture={handleDropEndCapture}
       ref={parentRef}
     >
-      {parent.children.map((child, index) => renderChild(child, index, parent))}
+      {parent.children.map((child, index) => renderChild(child, index, parent, mouseOver))}
     </div>
   );
 };

@@ -52,7 +52,8 @@ const Parent = ({
         handleDrag={handleDragAction}
         handleDragEnd={handleDragEndAction}
         isParentHovered={isParentHovered}
-        dragElementWidth={mouseOver ? dragElementWidth?.current : 0}
+        dragElementWidth={mouseOver ? dragElementWidth?.current + 10 : 0}
+        mouseOver={mouseOver}
       />
     );
   };

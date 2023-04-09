@@ -11,9 +11,20 @@ const Child = ({
   handleDragEnd,
   isRightSideElement,
   dragElementWidth,
+  mouseOver,
   isParentHovered
 }) => {
   const childRef = useRef();
+
+  const childProps = {};
+  if(isRightSideElement){
+
+      childProps.transform = `translate(${dragElementWidth}px, 0)`;
+      if(mouseOver){
+        childProps.transition = "none 0s ease 0s";
+      }
+  }
+  
   return (
     <div
       key={item.id}
@@ -32,7 +43,8 @@ const Child = ({
       onDrag={(e) => handleDrag(e, { item, index, parentId: parent.id })}
       onDragEnd={handleDragEnd}
       id={isRightSideElement ? "right" : "left"}
-      style={isRightSideElement ? { transform : `translate(${dragElementWidth + 10}px, 0)`, transition: "none 0s ease 0s"  } : {}}
+    //   style={isRightSideElement ? { transform : `translate(${dragElementWidth}px, 0)`, transition: "none 0s ease 0s"  } : {}}
+    style={{...childProps}}
     >
       <h4>{item.text}</h4>
     </div>
